@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Animation Maker (SAM-2D)</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="icon.png" />
+
+    <script src='gifshot.js'></script>
+
+</head>
+<body>
+
+<div id="gifContainer" style="position: absolute; z-index: 0; width: 30px; height: 30px; top: 90px; display: none;">gif container</div>
+
+<div id="appContainer">
+
+    <div id="filebarOpenFile" class="filebarOpen" style="visibility: hidden;">
+        <span class="filebarOpenRow" onclick="newFile()">New</span>
+        <span class="filebarOpenRow" id="filebarOpenFileOpen">
+            Open <input type="file" id="input-file" style="position: absolute; opacity: 0; cursor: pointer !important; width: 100%;" title="">
+        </span>
+        <span class="filebarOpenRow" onclick="downloadFile()">Save</span>
+        <span class="filebarOpenRow" onclick="encodeAsGif()">Export</span>
+    </div>
+
+    <textarea id="content-target" style="display: none"></textarea>
+
+    <div id="filebarOpenEdit" class="filebarOpen" style="visibility: hidden;">
+        <span class="filebarOpenRow"><s>Undo</s></span>
+        <span class="filebarOpenRow"><s>Redo</s></span>
+        <span class="filebarOpenRow" onclick="renameProj()">Rename Project</span>
+        <span class="filebarOpenRow"><s>Change Dimensions</s></span>
+        <span class="filebarOpenRow" onclick="zoomIn()">Zoom In</span>
+    </div>
+
+    <div id="filebarOpenOptions" class="filebarOpen" style="visibility: hidden;">
+        <span class="filebarOpenRow" onclick="alert('Access under toolbar for now.')">Accent Color</span>
+        <span class="filebarOpenRow" onclick="alert('Access under toolbar for now.')">Viewport BG Color</span>
+        <span class="filebarOpenRow"><s>Theme</s></span>
+    </div>
+
+    <div id="filebarOpenFrame" class="filebarOpen" style="visibility: hidden;">
+        <span class="filebarOpenRow" onclick="addFrameFunc()">Add</span>
+        <span class="filebarOpenRow" onclick="duplicateFrame()">Duplicate</span>
+        <span class="filebarOpenRow"><s>Delete</s></span>
+        <span class="filebarOpenRow" onclick="DownloadCanvasAsImage()">Export Frame</span>
+        <span class="filebarOpenRow" onclick="setFrameSpeed()">Frame Length</span>
+    </div>
+
+    <div id="filebarOpenPlayback" class="filebarOpen" style="visibility: hidden;">
+        <span class="filebarOpenRow" onclick="goToStart()">Go To Start</span>
+        <span class="filebarOpenRow" onclick="goToLast()">Go To Last</span>
+        <span class="filebarOpenRow" onclick="playAnimation()">Play Animation</span>
+        <span class="filebarOpenRow" onclick="pauseAnimation()">Pause</span>
+        <span class="filebarOpenRow" onclick="setFrameSpeed()">Frame Length</span>
+    </div>
+
+    <div id="filebar">
+        <div id="filebarFile" class="filebarButton" onclick="filebarOpenFileFunc()">File</div> <!-- new, open, save, export -->
+        <div id="filebarEdit" class="filebarButton" onclick="filebarOpenEditFunc()">Edit</div> <!-- undo, redo, rename proj, change dimensions -->
+        <div id="filebarOptions" class="filebarButton" onclick="filebarOpenOptionsFunc()">Options</div> <!-- accent color, theme -->
+        <div id="filebarFrame" class="filebarButton" onclick="filebarOpenFrameFunc()">Frame</div> <!-- add, duplicate, delete, export frame as png -->
+        <div id="filebarPlayback" class="filebarButton" onclick="filebarOpenPlaybackFunc()">Playback</div> <!-- Go to start, Play, pause, frame speed -->
+    </div>
+
+    <div id="topHalfContainer">
+        <div id="canvasSide">
+            <div id="canvasContainer">
+
+                <div id="tempCursorLoc" style="position:absolute; color: white; display: flex; pointer-events: none;
+                     bottom: 0; right: 0; justify-content: right; align-items: end; width: 120px; height: 40px; z-index: 10;">-- , --</div>
+
+
+                <span id="whichProject"><span id="projectName" style="text-transform: capitalize;">PROJECT NAME</span> — <span id="projectDimensions">1400x700</span></span>
+
+                <span id="whichFrame">Frame <span id="frameNumberText">1</span></span>
+
+                <div id="canvas">
+                    <img src="icon.png" style="position: absolute; bottom: 0; left: 0; width: 50px; max-width: 150px; opacity: 1; background-color: #2B2B2B;">
+                    <canvas id="onionSkin1" width="1400px" height="700px" style="border: none; pointer-events: none; opacity: 30%;" class="posAbs"></canvas>
+                    <canvas id="roughSketchCanvas" width="1400px" height="700px" class="posAbs" style="border: none; z-index: 9;"></canvas>
+                    <canvas id="drawingCanvas1" width="1400px" height="700px" style="border: none; z-index: 10;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="toolSide">
+            <div id="colorPalette">
+                <div id="chooseColor">
+
+                    <button id="colorSelectionButton" onclick="document.getElementById('colorSectionID').jscolor.show()">
+                        <span id='changeColorTextOverlay' style="color: #fff; transition: color 0.3s;">change color</span>
+                    </button>
+
+                    <button id="colorSectionID" data-jscolor="{position:'left', width:102, backgroundColor:'#252525',
+                    controlBorderColor:'rgba(0,0,0,1)', borderColor:'rgba(0,0,0,1)', borderRadius:0,
+                    shadow:false, onInput: 'update(this, \'#colorSelectionButton\')',
+                    palette:'#ffffff #585858 #da2016 #f5d417 #4ca12c #62d2eb #263294 #bfbfbf #000000 #7a582b #f8921b #3b740d #2362cb #420f81',
+                    paletteCols:7, hideOnPaletteClick:false,
+                    closeButton:false, closeText:'Close', buttonColor:'#fff'}" value="#3a3a3a" style="opacity: 0; pointer-events: none;">
+                    </button>
+
+                </div>
+                <div id="recentColors">
+                    <div class="swatch" id="addColorSwatch" title="Add current color as swatch">+</div>
+
+                    <div class="swatch" id="swatch1" onclick="starterSwatchClicked(1)" style="background-color: rgb(255, 255, 255);"></div>
+                    <div class="swatch" id="swatch2" onclick="starterSwatchClicked(2)" style="background-color: rgb(0, 0, 0);"></div>
+                    <div class="swatch" id="swatch3" onclick="starterSwatchClicked(3)" style="background-color: rgb(122, 88, 43);"></div>
+                    <div class="swatch" id="swatch4" onclick="starterSwatchClicked(4)" style="background-color: rgb(59, 116, 13);"></div>
+                    <div class="swatch" id="swatch5" onclick="starterSwatchClicked(5)" style="background-color: rgb(245, 212, 23);"></div>
+                    <div class="swatch" id="swatch6" onclick="starterSwatchClicked(6)" style="background-color: rgb(248, 146, 27);"></div>
+                    <div class="swatch" id="swatch7" onclick="starterSwatchClicked(7)" style="background-color: rgb(218, 32, 22);"></div>
+                    <div class="swatch" id="swatch8" onclick="starterSwatchClicked(8)" style="background-color: rgb(76, 161, 44);"></div>
+                    <div class="swatch" id="swatch9" onclick="starterSwatchClicked(9)" style="background-color: rgb(98, 210, 235);"></div>
+                    <div class="swatch" id="swatch10" onclick="starterSwatchClicked(10)" style="background-color: rgb(35, 98, 203);"></div>
+                    <div class="swatch" id="swatch11" onclick="starterSwatchClicked(11)" style="background-color: rgb(66, 15, 129);"></div>
+
+
+                </div>
+            </div>
+
+            <div id="tools">
+                <span style="color: #adadad">-- Brush Tools -----</span>
+                <form style="display: flex;">
+                    <div style="margin-right: 8%;">
+                        <input type="radio" id="brushSelect" name="brushEraser" value="brush" checked onclick="chooseBrush()">
+                        <label for="brushSelect">Brush</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="eraserSelect" name="brushEraser" value="eraser" onclick="chooseEraser()">
+                        <label for="eraserSelect">Eraser</label>
+                    </div>
+                </form>
+                <div id="brushSizeTools" class="toolRow" title="Brush Size">
+                    <span>🖌️</span>
+                    <input id="brushSizeNumber" type="number" style="margin-left: 5px; margin-right: 5px; width: 15%;" min="1" max="99" value="5">
+                    <input id="brushSizeSlider" type="range" style="width: 50%;" min="1" max="99" step="1" value="5">
+                </div>
+                <div style="display: flex;">
+                    <span style="padding-left: 5px; cursor: pointer;" onclick="document.getElementById('onionSkin1').style.visibility = 'visible'">on</span>
+                    <span style="padding-left: 5px; padding-right: 5px;">/</span>
+                    <span style="padding-right: 5px; cursor: pointer;" onclick="document.getElementById('onionSkin1').style.visibility = 'hidden'">off</span>
+                </div>
+                <span style="color: #adadad">-- Canvas Tools ---</span>
+                <div id="onionSkinTools" class="toolRow"  title="Onion skin">
+                    <span>🧅</span>
+                    <span style="padding-left: 5px; cursor: pointer;" onclick="document.getElementById('onionSkin1').style.visibility = 'visible'">on</span>
+                    <span style="padding-left: 5px; padding-right: 5px;">/</span>
+                    <span style="padding-right: 5px; cursor: pointer;" onclick="document.getElementById('onionSkin1').style.visibility = 'hidden'">off</span>
+                    <input id="onionOpacity1" type="range" style="width: 50%;" min="0" max="100" value="20" title="Onion skin opacity">
+                </div>
+                <div id="bgColorTools" class="toolRow" title="Change viewport BG" >
+                    <span style="padding-right: 5px;">🎨</span>
+                    <span style="cursor: pointer;" title="Show background in export"><s>show</s></span>
+                    <span style="padding-left: 5px; padding-right: 5px;">/</span>
+                    <span style="padding-right: 5px; cursor: pointer;" title="Hide background in export"><s>hide</s></span>
+                    <input id="bgColorInput" type="color" style="height: 60%; width: 20px;" value="#e5e5e5">
+                </div>
+                <span style="color: #adadad">-- Viewport Tools --</span>
+                <div id="accentColorTools" class="toolRow" title="Change accent color">
+                    <span style="padding-right: 5px;">🎨</span>
+                    <input id="accentColorInput" type="color" style="height: 60%; width: 20px;" value="#3bc4ff">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottomHalfContainer" style="position: relative">
+        <div id="framesContainer">
+
+            <div class="frame frameActive" id="frame1">1
+            <img id="canvasimg1" width="100%" height="100%" class="posAbs">
+            </div>
+            <div class="frame" id="frame2">2
+            <img id="canvasimg2" width="100%" height="100%" class="posAbs">
+            </div>
+            <div id="addFrame">+</div>
+
+        </div>
+
+        <div id="afterFrames">
+            <div id="frameNav" onclick="alert('This quick button is not fully finished.\nFor now, use the frame tab in the file bar, the mouse, or the arrow keys to switch frames.')">< ≪ ≫ ></div>
+            <div id="delFrameNav" onclick="alert('Frame deletion not fully implemented yet. Should be added soon!')">Delete</div>
+            <div id="dupFrameNav" onclick="duplicateFrame()">Duplicate</div>
+            <div id="playNav" onclick="setFrameSpeed()">Frame Length</div>
+            <div id="frameTimeNav" onclick="alert('This quick button is not finished, for now playback options can be accessed through the playback tab in the file bar!')">⏵⏸🔁</div>
+        </div>
+
+        <div id="consoleOutLog" style="width: 12%; height: 100%; overflow-y: auto; overflow-x: hidden; color: #6e6e6e; position:absolute; right: 0;"></div>
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+<script src="jscolor.js"></script>
+
+</body>
+</html>
