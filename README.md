@@ -1,3 +1,5 @@
+<br>
+
 <p align="center">
   <a href="https://getbootstrap.com/">
     <img src="https://sambender.net/projects/simpleAnimationMaker/icon.png" alt="SAM2D logo" height="165">
@@ -42,6 +44,7 @@ Feel free to help out with any of these and submit pull requests!
 - Export animation as MP4 or other video formats
 - Improve file importing
   -  Color swatches save
+- Cursor more accurately reflects brush size
 - New brush types & brush shapes
 - Options to change brush opacity
 
