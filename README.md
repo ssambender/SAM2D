@@ -30,6 +30,9 @@
 
 <br>
 
+![Project Image](https://github.com/ssambender/SAM2D/blob/main/preview-cropped.gif)
+
+
 ## Upcoming
 Feel free to help out with any of these and submit pull requests!
 - Undo/redo features
