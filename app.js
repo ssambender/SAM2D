@@ -691,7 +691,7 @@ function encodeAsGif() {
         }
     }
 
-    let framesArraySplice = framesArray.splice(1,framesArray.length);
+    let framesArraySplice = [...framesArray].splice(1,framesArray.length);
 
     gifshot.createGIF({
         gifWidth: projectDimensionX,
