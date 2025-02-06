@@ -1,7 +1,7 @@
 <br>
 
 <p align="center">
-  <a href="https://getbootstrap.com/">
+  <a href="https://sambender.net/projects/simpleAnimationMaker/index.html">
     <img src="https://sambender.net/projects/simpleAnimationMaker/icon.png" alt="SAM2D logo" height="165">
   </a>
 </p>
