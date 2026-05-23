@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://sambender.net/projects/simpleAnimationMaker/index.html">
-    <img src="https://sambender.net/projects/simpleAnimationMaker/icon.png" alt="SAM2D logo" height="165">
+    <img src="icon.png" alt="SAM2D logo" height="165">
   </a>
 </p>
 
@@ -32,7 +32,7 @@
 
 <br>
 
-![Project Image](https://github.com/ssambender/SAM2D/blob/main/preview-cropped.gif)
+![Project Image](preview-cropped.gif)
 
 
 ## Upcoming
