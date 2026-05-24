@@ -11,7 +11,7 @@
 <p align="center">
   A free and open source frame-by-frame animation software for the web and download.
   <br>
-  <a href="https://sambender.net/projects/simpleAnimationMaker/index.html"><strong>Try it Online »</strong></a>
+  <a href="https://ssambender.github.io/SAM2D/"><strong>Try it Online »</strong></a>
   <br>
 </p>
 
