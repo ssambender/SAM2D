@@ -1,474 +1,356 @@
 :root {
-    --accentColor: #3bc4ff; /* 3bc4ff */
+    --accentColor: #3bc4ff;
     --viewportBgColor: #e5e5e5;
     --currentColor: #666666;
 }
 
 * {
-    font-family: sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 *::-webkit-scrollbar {
-    width: 3px;
-    height: 7px;
+    width: 6px;
+    height: 8px;
 }
 *::-webkit-scrollbar-track {
-    background: #343434;
+    background: #252525;
 }
 *::-webkit-scrollbar-thumb {
-    background-color: #4a4a4a;
+    background-color: #565656;
     border-radius: 100px;
-    border: 0px solid #ffffff;
 }
 *::-webkit-scrollbar-thumb:hover {
-    background-color: #6e6e6e;
-    border: 0px solid #ffffff;
+    background-color: var(--accentColor);
 }
 
-#gifContainer img {
-    width: 100%;
-}
+#gifContainer img { width: 100%; }
 
 body {
     margin: 0;
     user-select: none;
+    background-color: #2b2b2b;
 }
 
-.posAbs {
-    position: absolute;
-}
+.posAbs { position: absolute; }
 
-/* FILE EDIT VIEW BAR AT TOP OF SCREEN (FOR EXE, NOT WEBSITE) ----------------------------------------- */
+/* FILE EDIT VIEW BAR ----------------------------------------- */
 #filebar {
     width: 100vw;
-    height: 2vh;
-    position: absolute;
-    top: 0;
+    height: 3vh;
+    min-height: 25px;
+    background-color: #1e1e1e;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 100;
 }
 
 .filebarButton {
     color: #ffffff;
-    padding-left: 0.5%;
-    padding-right: 0.5%;
+    padding: 0 15px;
+    font-size: 13px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 .filebarButton:hover {
-    background-color: #181818;
+    background-color: #343434;
 }
 
 .filebarOpen {
-    background-color: #252525;
+    background-color: #2a2a2a;
     position: absolute;
-    z-index: 3;
+    z-index: 101;
     display: flex;
     flex-direction: column;
-    width: 15%;
+    width: 180px;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    padding: 5px 0;
+    border: 1px solid #3d3d3d;
 }
 
 .filebarOpenRow {
     width: 100%;
-    aspect-ratio: 10;
-    color: #565656;
+    padding: 8px 15px;
+    font-size: 13px;
+    color: #d4d4d4;
     box-sizing: border-box;
-    padding-left: 10px;
     display: flex;
     align-items: center;
+    transition: background-color 0.1s, color 0.1s;
 }
 .filebarOpenRow:hover {
-    background-color: #343434;
-    color: var(--accentColor);
+    background-color: var(--accentColor);
+    color: #ffffff;
     cursor: pointer;
 }
 
-input[type=file], /* FF, IE7+, chrome (except button) */
-input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
-    cursor: pointer;
-}
-
-/* Container of the full app, 100% by 100% of screen -------------------------------------------------- */
+/* APP CONTAINERS -------------------------------------------------- */
 #appContainer {
     width: 100vw;
     height: 100vh;
-    background-color: #2b2b2b;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
 }
 
-/* Container of top half, contains canvas, tools, color pallet, --------------------------------------- */
 #topHalfContainer {
     width: 100%;
-    height: 85%;
-
+    height: 82%;
     display: flex;
+    padding-top: 3vh;
 }
 
 #canvasSide {
     height: 100%;
     width: 90%;
-
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #canvasContainer {
-    width: 90%;
+    width: 95%;
     height: 95%;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     overflow: hidden;
-
-    background-color: #343434;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
     position: relative;
 }
 
-#whichProject {
-    color: #ffffff;
+#whichProject, #whichFrame {
+    color: #888888;
     position: absolute;
-    top: 5px;
+    font-size: 12px;
+    font-weight: 500;
 }
-
-#whichFrame {
-    color: #ffffff;
-    position: absolute;
-    bottom: 5px;
-}
+#whichProject { top: 10px; left: 15px; }
+#whichFrame { bottom: 10px; left: 15px; }
 
 #canvas {
     height: 700px;
     width: 1400px;
-
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-
     background-color: var(--viewportBgColor);
     cursor: url("cursor.png") 8 8, auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 #toolSide {
-    overflow: hidden;
     width: 10%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #252525;
+    border-left: 1px solid #1e1e1e;
 }
 
 #colorPalette {
-    color: white;
     width: 100%;
-    height: 30%;
-
+    height: 35%;
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 #chooseColor {
-    height: 50%;
-    width: 100%;
+    height: 40px;
+    width: 90%;
+    margin: 10px auto;
     position: relative;
-
-    display: flex;
-    justify-content: right;
 }
 
 #colorSelectionButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    height: 90%;
-    position: absolute;
+    height: 100%;
+    border-radius: 6px;
+    border: 2px solid #1e1e1e;
     background-color: #666666;
-
-    font-size: 1vw;
+    font-size: 11px;
     text-transform: uppercase;
-    font-family: monospace;
-    font-weight: bold;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 #recentColors {
-    width: 100%;
-    height: 50%;
-    box-sizing: border-box;
+    width: 90%;
+    margin: 0 auto;
     display: flex;
-    justify-content: left;
     flex-wrap: wrap;
+    gap: 8px;
     overflow-y: auto;
+    padding-bottom: 10px;
 }
+
 #addColorSwatch {
-    border: solid 2px #565656;
-    background: none;
-    cursor: pointer;
+    background: transparent;
+    border: 2px dashed #565656;
     color: #565656;
-    font-size: 25px;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    border-radius: 6px;
 }
 #addColorSwatch:hover {
-    border: solid 2px var(--accentColor);
+    border-color: var(--accentColor);
     color: var(--accentColor);
 }
 
 .swatch {
-    width: 20%;
-    height: 30px;
-    margin-right: 5%;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
+    width: calc(25% - 6px);
+    aspect-ratio: 1;
+    height: auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border: 2px solid transparent;
+    transition: transform 0.1s, border-color 0.1s;
 }
-.swatch:nth-child(4n) {
-    margin-right: 0;
-}
-
 .swatch:hover {
-    background-color: black;
     cursor: pointer;
-    border: solid 2px var(--accentColor);
+    transform: scale(1.1);
+    border-color: var(--accentColor);
 }
 
 #tools {
-    color: var(--accentColor);
-    width: 100%;
-    height: 70%;
-
-    display: flex;
-    flex-direction: column;
-
-    background-color: #252525;
-}
-
-input[type="color"] {
-    -webkit-appearance: none;
-    border: none;
-}
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-input[type="color"]::-webkit-color-swatch {
-    border: none;
+    padding: 10px;
+    font-size: 13px;
+    color: #adadad;
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 .toolRow {
     width: 100%;
-    height: 5%;
+    padding: 10px 5px;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    padding-left: 5px;
+    border-bottom: 1px solid #343434;
+    box-sizing: border-box;
+}
+.toolRow:hover { background-color: #2b2b2b; border-radius: 4px; }
 
-    border-bottom: solid 2px #2B2B2B;
-}
-.toolRow:hover {
-    background-color: #343434;
-}
-
-/*Chrome onion skin */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #onionSkinTools input[type='range'] {
-        overflow: hidden;
-        width: 80px;
-        -webkit-appearance: none;
-        background: rgba(255, 255, 255, 0.18);
-    }
-
-    #onionSkinTools input[type='range']::-webkit-slider-runnable-track {
-        height: 10px;
-        -webkit-appearance: none;
-        color: var(--accentColor);
-        margin-top: -1px;
-    }
-
-    #onionSkinTools input[type='range']::-webkit-slider-thumb {
-        width: 1px;
-        -webkit-appearance: none;
-        height: 10px;
-        background: var(--accentColor);
-        box-shadow: -80px 0 0 80px var(--accentColor);
-    }
-
-}
-/** FF onion skin */
-#onionSkinTools input[type="range"]::-moz-range-progress {
-    background-color: var(--accentColor);
-}
-#onionSkinTools input[type="range"]::-moz-range-track {
-    background-color: rgba(255, 255, 255, 0.18);
-}
-/* IE onion skin */
-#onionSkinTools input[type="range"]::-ms-fill-lower {
-    background-color: var(--accentColor);
-}
-#onionSkinTools input[type="range"]::-ms-fill-upper {
-    background-color: rgba(255, 255, 255, 0.18);
-}
-
-/*Chrome brush size */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #brushSizeTools input[type='range'] {
-        overflow: hidden;
-        width: 80px;
-        -webkit-appearance: none;
-        background: rgba(255, 255, 255, 0.18);
-    }
-
-    #brushSizeTools input[type='range']::-webkit-slider-runnable-track {
-        height: 10px;
-        -webkit-appearance: none;
-        color: var(--currentColor);
-        margin-top: -1px;
-    }
-
-    #brushSizeTools input[type='range']::-webkit-slider-thumb {
-        width: 1px;
-        -webkit-appearance: none;
-        height: 10px;
-        background: var(--currentColor);
-        box-shadow: -80px 0 0 80px var(--currentColor);
-    }
-
-}
-/** FF brush size */
-#brushSizeTools input[type="range"]::-moz-range-progress {
-    background-color: var(--currentColor);
-}
-#brushSizeTools input[type="range"]::-moz-range-track {
-    background-color: rgba(255, 255, 255, 0.18);
-}
-/* IE brush size */
-#brushSizeTools input[type="range"]::-ms-fill-lower {
-    background-color: var(--currentColor);
-}
-#brushSizeTools input[type="range"]::-ms-fill-upper {
-    background-color: rgba(255, 255, 255, 0.18);
-}
-
-
-/* Container of bottom half, mostly just contains the frames, frames control, and playback ------------ */
+/* BOTTOM HALF - FRAMES --------------------------------------- */
 #bottomHalfContainer {
     width: 100%;
     height: 15%;
     display: flex;
-    color: var(--accentColor);
-    background-color: #343434;
+    background-color: #1e1e1e;
+    border-top: 1px solid #151515;
 }
 
-/* Frame navigator or add */
 #framesContainer {
-    width: 80%;
+    flex-grow: 1;      /* Take up remaining space dynamically */
+    min-width: 0;      /* CRITICAL: Prevents the container from stretching beyond its bounds */
     height: 100%;
-
     display: flex;
-    justify-content: left;
     align-items: center;
-
-    overflow-x: auto;
+    padding: 0 10px;
+    overflow-x: auto;  /* Allows horizontal scroll */
     overflow-y: hidden;
-
-    background-color: #343434;
+    gap: 10px;
 }
 
 .frame {
     height: 80%;
     aspect-ratio: 1;
-    margin-left: 1%;
-
     background-color: var(--viewportBgColor);
-
-    cursor: pointer;
-    box-sizing: border-box;
-
+    border-radius: 8px;
+    cursor: grab;
     display: flex;
     justify-content: center;
-    align-items: end;
+    align-items: flex-end;
     color: #000000;
+    font-weight: bold;
     position: relative;
+    box-shadow: inset 0 0 0 2px transparent, 0 2px 5px rgba(0,0,0,0.5);
+    transition: transform 0.1s, opacity 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    flex-shrink: 0;
 }
-.frame:hover {
-    filter: brightness(.85);
-}
-img {
-    border: 0;
-}
+.frame:hover { filter: brightness(0.9); transform: translateY(-2px); }
+.frame:active { cursor: grabbing; }
 
 .frameActive {
-    border: solid 5px var(--accentColor);
+    box-shadow: inset 0 0 0 4px var(--accentColor), 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Dragging styling */
+.dragging {
+    opacity: 0.4;
+    transform: scale(0.95);
+    box-shadow: inset 0 0 0 3px dashed var(--accentColor);
 }
 
 #addFrame {
     height: 80%;
     aspect-ratio: 1;
-
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 70px;
-    margin-left: 1%;
-    margin-right: 1%;
-
+    font-size: 50px;
     cursor: pointer;
     color: #565656;
-
-    box-sizing: border-box;
-    border: solid 5px #565656;
+    border-radius: 8px;
+    border: 3px dashed #565656;
+    flex-shrink: 0;
+    transition: color 0.2s, border-color 0.2s;
 }
 #addFrame:hover {
     color: var(--accentColor);
-    border: solid 5px var(--accentColor);
+    border-color: var(--accentColor);
 }
 
-/* After frames */
 #afterFrames {
+    width: 10%;
+    min-width: 100px;
+    flex-shrink: 0;
     height: 100%;
-    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-left: 1px solid #2b2b2b;
 }
 
-#frameNav {
-    background-color: #424242;
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
+#afterFrames > div {
+    background-color: #343434;
+    color: #d4d4d4;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
     cursor: pointer;
-    margin-top: 2%;
+    transition: background-color 0.2s;
+}
+#afterFrames > div:hover {
+    background-color: var(--accentColor);
+    color: #ffffff;
 }
 
-#delFrameNav {
-    background-color: #424242;
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
-    margin-top: 2%;
-}
-
-#dupFrameNav {
-    background-color: #424242;
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
-    margin-top: 2%;
-}
-
-#playNav {
-    background-color: #424242;
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
-    margin-top: 2%;
-}
-
-#frameTimeNav {
-    background-color: #424242;
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
-    cursor: pointer;
-    margin-top: 2%;
+#consoleOutLog {
+    width: 12%;
+    min-width: 120px;
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #1a1a1a;
+    font-family: monospace;
+    font-size: 11px;
+    color: #6e6e6e;
+    border-left: 1px solid #2b2b2b;
 }
