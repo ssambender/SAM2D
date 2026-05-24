@@ -218,6 +218,38 @@ function addFrameFunc() {
     }
 }
 
+function deleteCurrentFrame() {
+    if (totalFrames <= 1) {
+        alert("You must have at least one frame!");
+        return;
+    }
+
+    // Remove from array
+    framesArray.splice(currentFrame, 1);
+    
+    // Remove from DOM
+    document.getElementById('frame' + currentFrame).remove();
+    totalFrames--;
+
+    // Re-index remaining frames in the DOM
+    let remainingFrames = document.querySelectorAll('.frame');
+    for (let i = 0; i < remainingFrames.length; i++) {
+        let actualIndex = i + 1;
+        remainingFrames[i].id = "frame" + actualIndex;
+        // Update inner text (handling the img tag inside it)
+        remainingFrames[i].childNodes[0].nodeValue = actualIndex; 
+        remainingFrames[i].querySelector('img').id = "canvasimg" + actualIndex;
+    }
+
+    // Step back if we deleted the last frame
+    if (currentFrame > totalFrames) {
+        currentFrame = totalFrames;
+    }
+    
+    frameSwitchUpdate();
+    logInfo('Deleted frame.');
+}
+
 // Figure out what frame it is on when frame clicked
 for (let frame of frames) {
     frame.onclick = alertFrame;
@@ -316,7 +348,21 @@ let hOnion1 = canvas1.height;
 
 // save current
 function save() {
-    let dataURL = canvas1.toDataURL();
+    // create temporary canvas to composite the background and the drawing
+    let tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas1.width;
+    tempCanvas.height = canvas1.height;
+    let tempCtx = tempCanvas.getContext('2d');
+
+    // fill with current background color
+    tempCtx.fillStyle = canvasBgColor || '#E5E5E5'; 
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // draw the transparent sketch on top
+    tempCtx.drawImage(canvas1, 0, 0);
+
+    let dataURL = tempCanvas.toDataURL('image/png');
+    
     // sets frame preview to picture
     document.getElementById("canvasimg"+currentFrame).src = dataURL;
     document.getElementById("canvasimg"+currentFrame).style.display = "inline";
@@ -326,39 +372,33 @@ function save() {
 }
 
 // converts previously stored canvas dataURLs and converts to new image, and sets context of canvas to that
-function drawDataURIOnCanvas(strDataURI, canvas) {
-    "use strict";
+function drawDataURIOnCanvas(strDataURI, canvas, shouldClearCtx = false) {
+    if (!strDataURI) return;
     let img = new window.Image();
+    let context = canvas.getContext("2d");
     img.addEventListener("load", function () {
-        canvas.getContext("2d").drawImage(img, 0, 0);
+        if (shouldClearCtx) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        context.drawImage(img, 0, 0);
     });
     img.setAttribute("src", strDataURI);
 }
 
 function load() {
-    //load dataURL for currentFrame value in framesArray, if no value then return blank canvas
-    if(framesArray[currentFrame] === undefined) {
-        ctx.clearRect(0, 0, w, h);
-        //ctx.fillStyle = "#e5e5e5";
-        //ctx.fillRect(0,0,w,h);
-    }
-    else {
-        // load data from framesArray[currentFrame]
-        ctx.clearRect(0, 0, w, h);
-        drawDataURIOnCanvas(framesArray[currentFrame], canvas1);
-        document.getElementById("canvasimg"+currentFrame).src = framesArray[currentFrame];
-        document.getElementById("canvasimg"+currentFrame).style.display = "inline";
+    // updates previous frame onion skin first
+    ctxOnion1.clearRect(0, 0, wOnion1, hOnion1);
+    if(currentFrame > 1 && framesArray[currentFrame-1] !== undefined) {
+        drawDataURIOnCanvas(framesArray[currentFrame-1], onionSkin1, true);
     }
 
-    // updates previous frame onion skin
-    ctxOnion1.clearRect(0, 0, wOnion1, hOnion1);
-    if(currentFrame > 1) {
-        if(framesArray[currentFrame-1] !== undefined) {
-            drawDataURIOnCanvas(framesArray[currentFrame-1], onionSkin1);
-        }
-        else {
-            console.log('no onion skin for this frame.');
-        }
+    if(framesArray[currentFrame] === undefined) {
+        ctx.clearRect(0, 0, w, h);
+    } else {
+        // Pass 'true' to clear the context right before drawing to prevent flicker
+        drawDataURIOnCanvas(framesArray[currentFrame], canvas1, true);
+        document.getElementById("canvasimg"+currentFrame).src = framesArray[currentFrame];
+        document.getElementById("canvasimg"+currentFrame).style.display = "inline";
     }
     logInfo('loading frame ' + currentFrame + '...');
 }
@@ -614,31 +654,45 @@ function readFileContent(file) {
 let loadedText;
 function loadContent() {
     logInfo('loading project');
-    //console.log('old framesArray length: ' + framesArray.length);
     loadedText = document.getElementById('content-target').value;
+    let parsedArray = loadedText.split(',data');
 
-    //find first comma in text, start reading after that. take that up until next comma and add as frameArray[1]
-    //add one to frameArray[value] and continue
-    framesArray = loadedText.split(',data');
-
-    //console.log('new framesArray length: ' + framesArray.length);
-    //TODO - framesArray is now the loaded one, go through and update each frame now
-
-    // for every value in frames array, add 'data' before it starting at framesArray[2] and going to end
-    for(let i=1;i<framesArray.length;i++){
-        framesArray[i]="data"+framesArray[i];
+    // reconstruct the array properly
+    framesArray = [];
+    for(let i = 1; i < parsedArray.length; i++){
+        framesArray[i] = "data" + parsedArray[i];
     }
-    console.log(framesArray);
-    let newTotalFrames = framesArray.length - 1;
 
-    for (let i = 0; i < newTotalFrames; i++) {
-        addFrameFunc();
-        load();
+    // wipe frames
+    const framesContainer = document.getElementById('framesContainer');
+    const addBtn = document.getElementById('addFrame');
+    document.querySelectorAll('.frame').forEach(f => f.remove());
+    
+    totalFrames = 0;
+
+    // rebuild based on loaded array
+    for (let i = 1; i < framesArray.length; i++) {
+        totalFrames++;
+        let div = document.createElement('div');
+        div.className = 'frame';
+        div.id = "frame" + totalFrames.toString();
+        div.innerText = totalFrames.toString();
+
+        let divIMG = document.createElement('img');
+        divIMG.id = "canvasimg" + totalFrames.toString();
+        divIMG.setAttribute('width','100%');
+        divIMG.setAttribute('height','100%');
+        divIMG.className = 'posAbs';
+        if (framesArray[i]) divIMG.src = framesArray[i];
+
+        div.append(divIMG);
+        div.onclick = alertFrame; // Reattach click event
+        framesContainer.insertBefore(div, addBtn);
     }
-    setTimeout(() => {
-        currentFrame = totalFrames;
-        frameSwitchUpdate();
-    }, 10);
+
+    // set to frame 1
+    currentFrame = 1;
+    frameSwitchUpdate();
     logInfo('project loaded!');
 }
 
